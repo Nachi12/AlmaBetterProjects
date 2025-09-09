@@ -44,17 +44,26 @@ function App() {
 
   return (
     <>
-      <div id="mainContainer" className="min-h-screen flex items-center justify-center mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+      <div
+        id="mainContainer"
+        className="min-h-screen flex items-center justify-center mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8"
+      >
         <div className="w-full">
           <Logo />
           {/* <Sidebar /> */}
           <ErrorBoundary>
-            <div id="TopBar" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-7xl mx-auto mb-6">
+            <div
+              id="TopBar"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-7xl mx-auto mb-6"
+            >
               <CurrencyDropdown />
               <SearchBar />
             </div>
 
-            <div id="sub-container" className="flex flex-col lg:flex-row justify-between gap-6 w-full max-w-7xl mx-auto">
+            <div
+              id="sub-container"
+              className="flex flex-col lg:flex-row justify-between gap-6 w-full max-w-7xl mx-auto"
+            >
               <div
                 id="chartsection"
                 className="flex flex-col md:flex-row md:flex-wrap justify-center lg:justify-start items-start gap-6 w-full lg:w-2/3"

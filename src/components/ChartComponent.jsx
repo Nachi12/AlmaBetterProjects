@@ -1,10 +1,7 @@
-/**
- * ChartComponent: Displays cryptocurrency market trends with various chart types.
- * @module ChartComponent
- */
+
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { Line, Bar, Doughnut, Radar, PolarArea } from "react-chartjs-2";
+import { Line, Bar, Doughnut, Radar, PolarArea, Pie } from "react-chartjs-2"; // Added Pie
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -58,9 +55,7 @@ const ChartComponent = () => {
   // State for selected chart type (e.g., line, bar)
   const [chartType, setChartType] = useState("line");
   // State for selected currency for market data
-  const [selectedCurrency, setSelectedCurrency] = useState(
-    baseCurrency || "usd"
-  );
+  const [selectedCurrency, setSelectedCurrency] = useState(baseCurrency || "usd");
 
   // Configuration Data Section
   // -------------------------
@@ -81,6 +76,7 @@ const ChartComponent = () => {
     { value: "doughnut", label: "Doughnut Chart", component: Doughnut },
     { value: "radar", label: "Radar Chart", component: Radar },
     { value: "polarArea", label: "Polar Area Chart", component: PolarArea },
+    { value: "pie", label: "Pie Chart", component: Pie }, // Added Pie Chart
   ];
 
   // Mapping of time range labels to days for API queries
@@ -331,8 +327,12 @@ const ChartComponent = () => {
       },
     };
 
-    // Options for doughnut and polarArea charts
-    if (chartType === "doughnut" || chartType === "polarArea") {
+    // Options for doughnut, polarArea, and pie charts
+    if (
+      chartType === "doughnut" ||
+      chartType === "polarArea" ||
+      chartType === "pie" // Added pie chart to this condition
+    ) {
       return {
         responsive: true,
         maintainAspectRatio: false,
@@ -430,7 +430,7 @@ const ChartComponent = () => {
   const ChartComponent =
     chartTypes.find((type) => type.value === chartType)?.component || Line;
 
-  // Get latest market cap data for doughnut and polarArea charts
+  // Get latest market cap data for doughnut, polarArea, and pie charts
   const getCurrentMarketCapData = () => {
     if (!chartData || !chartData.datasets) return null;
 
@@ -468,7 +468,11 @@ const ChartComponent = () => {
 
   // Prepare data for display based on chart type
   const getDisplayData = () => {
-    if (chartType === "doughnut" || chartType === "polarArea") {
+    if (
+      chartType === "doughnut" ||
+      chartType === "polarArea" ||
+      chartType === "pie" // Added pie chart to this condition
+    ) {
       return getCurrentMarketCapData();
     }
     if (chartType === "radar") {
@@ -493,26 +497,13 @@ const ChartComponent = () => {
   // --------------------
   return (
     // Main container for the chart component
-    <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg w-full max-w-8xl border-2 border-gray-200 m-2 ">
+    <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg w-full max-w-4xl border-2 border-gray-200 m-2 ">
       {/* Controls Section */}
       <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
         {/* Currency and Chart Type Dropdowns */}
         <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-4 sm:gap-6">
           {/* Currency selection dropdown */}
-          <div className="flex items-center gap-3 w-full sm:w-auto">
-            <label className="font-semibold text-gray-700">Currency:</label>
-            <select
-              value={selectedCurrency}
-              onChange={(e) => setSelectedCurrency(e.target.value)}
-              className="px-4 py-2 border-2 border-gray-300 rounded-lg  cursor-pointer focus:border-blue-500 focus:outline-none w-full sm:w-40 bg-white hover:bg-blue-50"
-            >
-              {currencies.map((currency) => (
-                <option key={currency.value} value={currency.value}>
-                  {currency.label}
-                </option>
-              ))}
-            </select>
-          </div>
+       
 
           {/* Chart type selection dropdown */}
           <div className="flex items-center gap-3 w-full sm:w-auto">
@@ -531,12 +522,12 @@ const ChartComponent = () => {
           </div>
 
           {/* Crypto Selection */}
-          <div className="w-full">
+          <div className="w-100">
             <div className="flex items-center gap-3">
               <select
                 defaultValue=""
                 onChange={handleCryptoSelect}
-                className="px-4 py-2 border-2 border-gray-300 rounded-lg bg-white cursor-pointer focus:border-blue-500 focus:outline-none w-full hover:bg-blue-50"
+                className="px-4 py-2 border-2 border-gray-300 rounded-lg bg-white cursor-pointer focus:border-blue-500 focus:outline-none lg:w-full sm:w-1/2 hover:bg-blue-50"
               >
                 <option value="" disabled>
                   {selectedCryptos.length > 0
@@ -572,7 +563,7 @@ const ChartComponent = () => {
 
         {/* Time Range Controls - Only for Line and Bar Charts */}
         {(chartType === "line" || chartType === "bar") && (
-          <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-3">
+          <div className="flex flex-col sm:flex-row lg:flex-nowrap sm:flex-wrap  items-start sm:items-center gap-3">
             <span className="font-semibold text-gray-700">Time Range:</span>
             {["1D", "1W", "1M", "6M", "1Y"].map((range) => (
               <button
@@ -593,7 +584,7 @@ const ChartComponent = () => {
 
             {/* Custom Date Range */}
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 ml-0 sm:ml-4 p-2 border-2 border-gray-300 rounded-lg bg-white w-full sm:w-auto">
-              <span className="text-sm font-medium text-gray-600">Custom:</span>
+              {/* <span className="text-sm font-medium text-gray-600">Custom:</span> */}
               <input
                 type="date"
                 value={dateRange.start}
