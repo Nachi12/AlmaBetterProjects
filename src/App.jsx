@@ -44,38 +44,40 @@ function App() {
 
   return (
     <>
-      <div id="mainContainer" className="min-h-screen max-w-full mx-auto px-4 sm:px-6 lg:px-8">
-        <Logo />
-        {/* <Sidebar /> */}
-        <ErrorBoundary>
-          <div id="TopBar" className="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-4 w-full max-w-7xl mx-auto mb-6">
-            <CurrencyDropdown />
-            <SearchBar />
-          </div>
-
-          <div id="sub-container" className="flex flex-col lg:flex-row justify-between gap-6 w-full max-w-7xl mx-auto">
-            <div
-              id="chartsection"
-              className="flex flex-col md:flex-row md:flex-wrap justify-center lg:justify-start items-start gap-6 w-full lg:w-2/3"
-            >
-              <div className="w-full">
-                <ChartComponent />
-              </div>
-              <div className="flex flex-col md:flex-row gap-6 w-full">
-                <div className="w-full md:w-1/2">
-                  <Portfolio />
-                </div>
-                <div className="w-full md:w-1/2">
-                  <ExchangeRates />
-                </div>
-              </div>
+      <div id="mainContainer" className="min-h-screen flex items-center justify-center mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8">
+        <div className="w-full">
+          <Logo />
+          {/* <Sidebar /> */}
+          <ErrorBoundary>
+            <div id="TopBar" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 w-full max-w-7xl mx-auto mb-6">
+              <CurrencyDropdown />
+              <SearchBar />
             </div>
 
-            <div id="list" className="w-full lg:w-1/3">
-              <CryptoList />
+            <div id="sub-container" className="flex flex-col lg:flex-row justify-between gap-6 w-full max-w-7xl mx-auto">
+              <div
+                id="chartsection"
+                className="flex flex-col md:flex-row md:flex-wrap justify-center lg:justify-start items-start gap-6 w-full lg:w-2/3"
+              >
+                <div className="w-full">
+                  <ChartComponent />
+                </div>
+                <div className="flex flex-col md:flex-row gap-6 w-full">
+                  <div className="w-full md:w-1/2">
+                    <Portfolio />
+                  </div>
+                  <div className="w-full md:w-1/2">
+                    <ExchangeRates />
+                  </div>
+                </div>
+              </div>
+
+              <div id="list" className="w-full lg:w-1/3">
+                <CryptoList />
+              </div>
             </div>
-          </div>
-        </ErrorBoundary>
+          </ErrorBoundary>
+        </div>
       </div>
     </>
   );

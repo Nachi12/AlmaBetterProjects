@@ -469,7 +469,7 @@ const ChartComponent = () => {
             <select
               value={selectedCurrency}
               onChange={(e) => setSelectedCurrency(e.target.value)}
-              className="px-4 py-2 border-2 border-gray-300 rounded-lg bg-white cursor-pointer focus:border-blue-500 focus:outline-none w-full sm:w-40"
+              className="px-4 py-2 border-2 border-gray-300 rounded-lg  cursor-pointer focus:border-blue-500 focus:outline-none w-full sm:w-40 bg-white hover:bg-blue-50"
             >
               {currencies.map((currency) => (
                 <option key={currency.value} value={currency.value}>
@@ -484,7 +484,7 @@ const ChartComponent = () => {
             <select
               value={chartType}
               onChange={(e) => setChartType(e.target.value)}
-              className="px-4 py-2 border-2 border-gray-300 rounded-lg bg-white cursor-pointer focus:border-blue-500 focus:outline-none w-full sm:w-40"
+              className="px-4 py-2 border-2 border-gray-300 rounded-lg  cursor-pointer focus:border-blue-500 focus:outline-none w-full sm:w-40 bg-white hover:bg-blue-50"
             >
               {chartTypes.map((type) => (
                 <option key={type.value} value={type.value}>
@@ -500,7 +500,7 @@ const ChartComponent = () => {
               <select
                 defaultValue=""
                 onChange={handleCryptoSelect}
-                className="px-4 py-2 border-2 border-gray-300 rounded-lg bg-white cursor-pointer focus:border-blue-500 focus:outline-none w-full"
+                className="px-4 py-2 border-2 border-gray-300 rounded-lg bg-white cursor-pointer focus:border-blue-500 focus:outline-none w-full hover:bg-blue-50"
               >
                 <option value="" disabled>
                   {selectedCryptos.length > 0
@@ -564,7 +564,7 @@ const ChartComponent = () => {
                 onChange={(e) =>
                   setDateRange((prev) => ({ ...prev, start: e.target.value }))
                 }
-                className="px-2 py-1 border border-gray-300 rounded cursor-pointer text-sm focus:outline-none focus:border-blue-500 w-full sm:w-32"
+                className="px-2 py-1 border border-gray-300 rounded cursor-pointer text-sm focus:outline-none focus:border-blue-500 w-full sm:w-32 hover:bg-blue-50"
               />
               <span className="text-gray-400 hidden sm:inline">to</span>
               <input
@@ -573,7 +573,7 @@ const ChartComponent = () => {
                 onChange={(e) =>
                   setDateRange((prev) => ({ ...prev, end: e.target.value }))
                 }
-                className="px-2 py-1 border border-gray-300 rounded cursor-pointer text-sm focus:outline-none focus:border-blue-500 w-full sm:w-32"
+                className="px-2 py-1 border border-gray-300 rounded cursor-pointer text-sm focus:outline-none focus:border-blue-500 w-full sm:w-32 hover:bg-blue-50"
               />
             </div>
           </div>
