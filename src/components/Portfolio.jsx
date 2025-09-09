@@ -13,10 +13,18 @@ import {
 } from "chart.js";
 import ChartDataLabels from "chartjs-plugin-datalabels";
 
-// Register Chart.js components and plugin
+// ChartJS Configuration Section
+// ----------------------------
+// Register Chart.js components and data labels plugin for pie chart rendering
 ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
+/**
+ * Portfolio component
+ * @returns {JSX.Element} Rendered portfolio overview with pie chart
+ */
 const Portfolio = () => {
+  // Data Configuration Section
+  // -------------------------
   // Dummy data for user investments (in USD)
   const investmentsUSD = [
     { id: "bitcoin", name: "Bitcoin", amount: 5000, value: 55000 },
@@ -24,10 +32,14 @@ const Portfolio = () => {
     { id: "cardano", name: "Cardano", amount: 2000, value: 5000 },
   ];
 
-  // Get base currency from Redux store
+  // State and Data Retrieval Section
+  // -------------------------------
+  // Retrieve base currency from Redux store
   const baseCurrency = useSelector((state) => state.crypto.baseCurrency);
 
-  // Simple conversion rates (approximate for demonstration)
+  // Conversion Rates Section
+  // -----------------------
+  // Simple conversion rates for demonstration (approximate)
   const conversionRates = {
     usd: 1,
     inr: 83.5, // Approximate USD to INR rate
@@ -36,7 +48,9 @@ const Portfolio = () => {
     jpy: 150,
   };
 
-  // Convert investments based on baseCurrency
+  // Data Processing Section
+  // ----------------------
+  // Convert investment amounts and values based on selected base currency
   const conversionRate = conversionRates[baseCurrency.toLowerCase()] || 1;
   const investments = investmentsUSD.map((coin) => ({
     ...coin,
@@ -44,10 +58,12 @@ const Portfolio = () => {
     amount: coin.amount * conversionRate,
   }));
 
-  // Calculate total investment
+  // Calculate total investment value
   const totalInvestment = investments.reduce((sum, coin) => sum + coin.value, 0);
 
-  // Prepare chart data
+  // Chart Data Preparation Section
+  // -----------------------------
+  // Prepare data for the pie chart
   const chartData = {
     labels: investments.map((coin) => coin.name),
     datasets: [
@@ -68,6 +84,9 @@ const Portfolio = () => {
     ],
   };
 
+  // Chart Options Section
+  // --------------------
+  // Configure pie chart options for display
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -76,6 +95,7 @@ const Portfolio = () => {
       title: { display: true, text: "Portfolio Allocation" },
       tooltip: {
         callbacks: {
+          // Format tooltip to show currency value and percentage
           label: (context) => {
             const value = context.raw;
             const percentage = ((value / totalInvestment) * 100).toFixed(2);
@@ -86,6 +106,7 @@ const Portfolio = () => {
       datalabels: {
         color: "#fff",
         font: { size: 14, weight: "bold" },
+        // Format data labels to show currency and value
         formatter: (value) => `${baseCurrency.toUpperCase()} ${value.toLocaleString()}`,
         anchor: "center",
         align: "center",
@@ -94,42 +115,25 @@ const Portfolio = () => {
     },
   };
 
+  // JSX Rendering Section
+  // --------------------
   return (
+    // Main container for the portfolio overview
     <div className="bg-white p-4 sm:p-6 rounded-xl shadow-xl w-full border-4 border-gray-100">
+      {/* Header Section */}
+      {/* Display portfolio title */}
       <h2 className="text-xl sm:text-2xl font-bold mb-4">Portfolio Overview</h2>
+      {/* Display total investment value */}
       <p className="text-lg sm:text-xl text-gray-700 mb-6">
         Total Investment: <span className="font-semibold">{baseCurrency.toUpperCase()} {totalInvestment.toLocaleString()}</span>
       </p>
 
-      {/* Pie Chart */}
+      {/* Pie Chart Section */}
+      {/* Display pie chart of portfolio allocation */}
       <div className="h-64 sm:h-80 mb-6 flex justify-center">
         <Pie data={chartData} options={chartOptions} />
       </div>
 
-      {/* Investment Table */}
-      {/* <table className="w-full text-left border-collapse">
-        <thead>
-          <tr className="bg-gray-100">
-            <th className="p-2 border">Coin</th>
-            <th className="p-2 border">Amount Invested ({baseCurrency.toUpperCase()})</th>
-            <th className="p-2 border">Current Value ({baseCurrency.toUpperCase()})</th>
-            <th className="p-2 border">Percentage</th>
-          </tr>
-        </thead>
-        <tbody>
-          {investments.map((coin) => {
-            const percentage = ((coin.value / totalInvestment) * 100).toFixed(2);
-            return (
-              <tr key={coin.id} className="border-t">
-                <td className="p-2">{coin.name}</td>
-                <td className="p-2">{baseCurrency.toUpperCase()} {coin.amount.toLocaleString()}</td>
-                <td className="p-2">{baseCurrency.toUpperCase()} {coin.value.toLocaleString()}</td>
-                <td className="p-2">{percentage}%</td>
-              </tr>
-            );
-          })}
-        </tbody>
-      </table> */}
     </div>
   );
 };

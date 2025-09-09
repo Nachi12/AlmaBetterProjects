@@ -21,6 +21,7 @@ import {
 
 // ChartJS Configuration Section
 // ----------------------------
+// Register required Chart.js components for rendering various chart types
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -34,7 +35,7 @@ ChartJS.register(
   Legend
 );
 
-// Unregister any data labels plugin if it exists
+// Unregister data labels plugin if it exists to prevent unwanted labels
 if (ChartJS.registry.plugins.get("datalabels")) {
   ChartJS.unregister(ChartJS.registry.plugins.get("datalabels"));
 }
@@ -42,19 +43,28 @@ if (ChartJS.registry.plugins.get("datalabels")) {
 const ChartComponent = () => {
   // State and Data Retrieval Section
   // --------------------------------
+  // Retrieve crypto data and base currency from Redux store
   const { cryptos, baseCurrency } = useSelector((state) => state.crypto);
+  // State for selected cryptocurrencies to track
   const [selectedCryptos, setSelectedCryptos] = useState([]);
+  // State for selected time range (in days)
   const [timeRange, setTimeRange] = useState("30");
+  // State for custom date range
   const [dateRange, setDateRange] = useState({ start: "", end: "" });
+  // State for chart data to be rendered
   const [chartData, setChartData] = useState(null);
+  // State to manage loading status during data fetching
   const [loading, setLoading] = useState(false);
+  // State for selected chart type (e.g., line, bar)
   const [chartType, setChartType] = useState("line");
+  // State for selected currency for market data
   const [selectedCurrency, setSelectedCurrency] = useState(
     baseCurrency || "usd"
   );
 
   // Configuration Data Section
   // -------------------------
+  // Available currencies for market data display
   const currencies = [
     { value: "usd", label: "USD ($)" },
     { value: "eur", label: "EUR (€)" },
@@ -64,6 +74,7 @@ const ChartComponent = () => {
     { value: "eth", label: "ETH" },
   ];
 
+  // Available chart types and their corresponding components
   const chartTypes = [
     { value: "line", label: "Line Chart", component: Line },
     { value: "bar", label: "Bar Chart", component: Bar },
@@ -72,6 +83,7 @@ const ChartComponent = () => {
     { value: "polarArea", label: "Polar Area Chart", component: PolarArea },
   ];
 
+  // Mapping of time range labels to days for API queries
   const timeRangeMap = {
     "1D": 1,
     "1W": 7,
@@ -82,6 +94,7 @@ const ChartComponent = () => {
 
   // Event Handler Section
   // --------------------
+  // Handle selection of a new cryptocurrency
   const handleCryptoSelect = (e) => {
     const cryptoId = e.target.value;
     if (cryptoId && !selectedCryptos.includes(cryptoId)) {
@@ -90,12 +103,14 @@ const ChartComponent = () => {
     e.target.value = "";
   };
 
+  // Remove a cryptocurrency from the selected list
   const removeCrypto = (id) => {
     setSelectedCryptos((prev) => prev.filter((c) => c !== id));
   };
 
   // Data Fetching Section
   // --------------------
+  // Fetch market data for selected cryptocurrencies when dependencies change
   useEffect(() => {
     const fetchData = async () => {
       if (selectedCryptos.length === 0) {
@@ -106,10 +121,12 @@ const ChartComponent = () => {
       setLoading(true);
 
       try {
+        // Fetch market cap data for each selected cryptocurrency
         const datasets = await Promise.all(
           selectedCryptos.map(async (id, index) => {
             let url;
 
+            // Determine API URL based on custom date range or predefined time range
             if (dateRange.start && dateRange.end) {
               const from = Math.floor(
                 new Date(dateRange.start).getTime() / 1000
@@ -125,6 +142,7 @@ const ChartComponent = () => {
 
             const values = data.market_caps.map((entry) => entry[1]);
 
+            // Define color palette for chart datasets
             const colors = [
               "rgba(54, 162, 235, 1)",
               "rgba(255, 99, 132, 1)",
@@ -156,6 +174,7 @@ const ChartComponent = () => {
           const firstCryptoId = selectedCryptos[0];
           let url;
 
+          // Fetch labels (dates) for the first selected cryptocurrency
           if (dateRange.start && dateRange.end) {
             const from = Math.floor(new Date(dateRange.start).getTime() / 1000);
             const to = Math.floor(new Date(dateRange.end).getTime() / 1000);
@@ -167,14 +186,17 @@ const ChartComponent = () => {
           const res = await fetch(url);
           const data = await res.json();
 
+          // Generate labels from timestamps
           const rawLabels = data.market_caps.map((entry) =>
             new Date(entry[0]).toLocaleDateString()
           );
 
+          // Reduce label density for better readability
           const step = Math.ceil(rawLabels.length / 15);
           labels = rawLabels.filter((_, index) => index % step === 0);
         }
 
+        // Set chart data with labels and datasets
         setChartData({
           labels,
           datasets,
@@ -191,7 +213,9 @@ const ChartComponent = () => {
 
   // Chart Options Section
   // --------------------
+  // Define chart options based on chart type
   const getChartOptions = () => {
+    // Base options for line and bar charts
     const baseOptions = {
       responsive: true,
       maintainAspectRatio: false,
@@ -230,6 +254,7 @@ const ChartComponent = () => {
           borderColor: "#ddd",
           borderWidth: 1,
           callbacks: {
+            // Format tooltip to show currency values
             label: function (context) {
               return `${context.dataset.label}: ${new Intl.NumberFormat(
                 "en-US",
@@ -279,6 +304,7 @@ const ChartComponent = () => {
             font: {
               size: 12,
             },
+            // Format y-axis ticks as currency
             callback: function (value) {
               return new Intl.NumberFormat("en-US", {
                 style: "currency",
@@ -305,6 +331,7 @@ const ChartComponent = () => {
       },
     };
 
+    // Options for doughnut and polarArea charts
     if (chartType === "doughnut" || chartType === "polarArea") {
       return {
         responsive: true,
@@ -328,6 +355,7 @@ const ChartComponent = () => {
           },
           tooltip: {
             callbacks: {
+              // Format tooltip for single values
               label: function (context) {
                 return `${context.label}: ${new Intl.NumberFormat("en-US", {
                   style: "currency",
@@ -345,6 +373,7 @@ const ChartComponent = () => {
       };
     }
 
+    // Options for radar chart
     if (chartType === "radar") {
       return {
         responsive: true,
@@ -377,6 +406,7 @@ const ChartComponent = () => {
               color: "rgba(0,0,0,0.1)",
             },
             ticks: {
+              // Format radial axis ticks
               callback: function (value) {
                 return new Intl.NumberFormat("en-US", {
                   notation: "compact",
@@ -396,9 +426,11 @@ const ChartComponent = () => {
 
   // Data Processing Section
   // ----------------------
+  // Select the appropriate chart component based on chart type
   const ChartComponent =
     chartTypes.find((type) => type.value === chartType)?.component || Line;
 
+  // Get latest market cap data for doughnut and polarArea charts
   const getCurrentMarketCapData = () => {
     if (!chartData || !chartData.datasets) return null;
 
@@ -434,6 +466,7 @@ const ChartComponent = () => {
     };
   };
 
+  // Prepare data for display based on chart type
   const getDisplayData = () => {
     if (chartType === "doughnut" || chartType === "polarArea") {
       return getCurrentMarketCapData();
@@ -459,11 +492,13 @@ const ChartComponent = () => {
   // JSX Rendering Section
   // --------------------
   return (
+    // Main container for the chart component
     <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg w-full max-w-8xl border-2 border-gray-200 m-2 ">
       {/* Controls Section */}
       <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
         {/* Currency and Chart Type Dropdowns */}
         <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-4 sm:gap-6">
+          {/* Currency selection dropdown */}
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <label className="font-semibold text-gray-700">Currency:</label>
             <select
@@ -479,6 +514,7 @@ const ChartComponent = () => {
             </select>
           </div>
 
+          {/* Chart type selection dropdown */}
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <label className="font-semibold text-gray-700">Chart Type:</label>
             <select
@@ -583,11 +619,13 @@ const ChartComponent = () => {
       {/* Chart Display */}
       <div className="mt-6">
         {loading ? (
+          // Display loading spinner while fetching data
           <div className="text-center py-12">
             <div className="inline-block animate-spin rounded-full h-12 w-12 border-4 border-blue-500 border-t-transparent"></div>
             <p className="text-gray-500 mt-4 text-lg">Loading chart data...</p>
           </div>
         ) : chartData ? (
+          // Render the selected chart type with data and options
           <div className="h-80 sm:h-96 bg-white p-4 border border-gray-200 rounded-lg">
             <ChartComponent
               data={getDisplayData()}
@@ -595,6 +633,7 @@ const ChartComponent = () => {
             />
           </div>
         ) : (
+          // Display placeholder when no cryptocurrencies are selected
           <div className="text-center py-12 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
             <div className="text-gray-400 text-6xl mb-4">📈</div>
             <p className="text-gray-600 text-lg">
@@ -606,6 +645,7 @@ const ChartComponent = () => {
 
       {/* Selected Cryptos Summary */}
       {selectedCryptos.length > 0 && (
+        // Display selected cryptocurrencies with remove buttons
         <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
           <h4 className="font-semibold mb-3 text-gray-800">
             Tracking {selectedCryptos.length} Cryptocurrenc

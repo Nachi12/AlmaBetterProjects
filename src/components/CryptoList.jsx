@@ -12,15 +12,16 @@ import { useSelector } from "react-redux";
 const CryptoList = () => {
   // State and Data Retrieval Section
   // --------------------------------
-  // Retrieves filteredCryptos and baseCurrency from the Redux store
+  // Retrieve filtered cryptocurrencies and base currency from Redux store
   const { filteredCryptos, baseCurrency } = useSelector(
     (state) => state.crypto
   );
+  // Use filteredCryptos if available, otherwise default to empty array
   const cryptosToDisplay = filteredCryptos.length > 0 ? filteredCryptos : [];
 
   // Utility Functions Section
   // ------------------------
-  // Formats market cap value based on the selected currency
+  // Format market cap value based on the selected currency
   const formatMarketCap = (marketCap) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -30,7 +31,7 @@ const CryptoList = () => {
     }).format(marketCap);
   };
 
-  // Formats percentage change to one decimal place
+  // Format percentage change to one decimal place for display
   const formatPercentage = (percentage) => {
     return Math.abs(percentage).toFixed(1);
   };
@@ -38,9 +39,10 @@ const CryptoList = () => {
   // JSX Rendering Section
   // ---------------------
   return (
+    // Main container for the cryptocurrency list
     <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden w-60">
       {/* Header Section */}
-      {/* Displays the title of the cryptocurrency list */}
+      {/* Display the title of the cryptocurrency list */}
       <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
         <h2 className="text-lg font-semibold text-gray-800">
           Cryptocurrency by market cap
@@ -48,9 +50,10 @@ const CryptoList = () => {
       </div>
 
       {/* List Section */}
-      {/* Renders the list of cryptocurrencies or a fallback message */}
+      {/* Render the list of cryptocurrencies or a fallback message if none available */}
       <div className="divide-y divide-gray-100">
         {cryptosToDisplay.length > 0 ? (
+          // Map through cryptocurrencies to display each item
           cryptosToDisplay.map((crypto, index) => (
             <div
               key={crypto.id}
@@ -58,7 +61,7 @@ const CryptoList = () => {
             >
               <div className="flex items-center justify-between">
                 {/* Crypto Info Section */}
-                {/* Displays the name and market cap of each cryptocurrency */}
+                {/* Display cryptocurrency name and formatted market cap */}
                 <div className="flex-1">
                   <h3 className="font-medium text-gray-900 text-base mb-1">
                     {crypto.name}
@@ -69,7 +72,7 @@ const CryptoList = () => {
                 </div>
 
                 {/* Percentage Change Section */}
-                {/* Shows the 24h price change percentage with color coding */}
+                {/* Display 24-hour price change percentage with color-coded styling */}
                 <div className="flex items-center ml-4">
                   {crypto.price_change_percentage_24h !== undefined && (
                     <div
@@ -79,6 +82,7 @@ const CryptoList = () => {
                           : "text-red-600 bg-red-50"
                       }`}
                     >
+                      {/* Display triangle icon indicating price increase or decrease */}
                       <span
                         className={`inline-block w-0 h-0 ${
                           crypto.price_change_percentage_24h >= 0
@@ -86,6 +90,7 @@ const CryptoList = () => {
                             : "border-l-4 border-r-4 border-t-4 border-transparent border-t-red-600"
                         }`}
                       ></span>
+                      {/* Display formatted percentage change */}
                       <span>
                         {formatPercentage(crypto.price_change_percentage_24h)} %
                       </span>
@@ -96,6 +101,7 @@ const CryptoList = () => {
             </div>
           ))
         ) : (
+          // Display fallback message when no cryptocurrencies are available
           <div className="px-6 py-8 text-center text-gray-500">
             <div className="text-4xl mb-2">📊</div>
             <p>No cryptocurrencies available</p>
